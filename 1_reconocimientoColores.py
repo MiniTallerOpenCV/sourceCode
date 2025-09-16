@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+
 cap = cv2.VideoCapture(0)
 x, y, w, h = 10, 10, 200, 200
 
@@ -15,10 +16,16 @@ colors_hsv = {
 def get_dominant_color_hsv(roi):
     hsv_roi = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv_roi)
-    if np.mean(v) > 200 and np.mean(s) < 30:
-        return "Blanco"
-    elif np.mean(v) < 50 and np.mean(s) < 50:
+    mean_v = np.mean(v)
+    mean_s = np.mean(s)
+
+    # Primero revisamos Negro y Blanco
+    if mean_v < 40:  # más estricto para negro
         return "Negro"
+    elif mean_v > 200 and mean_s < 30:
+        return "Blanco"
+
+    # Si no es negro ni blanco, buscamos colores
     color_percentages = {}
     for color, ranges in colors_hsv.items():
         if color == "Rojo":
@@ -30,8 +37,22 @@ def get_dominant_color_hsv(roi):
             lower, upper = ranges
             mask = cv2.inRange(hsv_roi, np.array(lower), np.array(upper))
         color_percentages[color] = cv2.countNonZero(mask)
+
     dominant_color = max(color_percentages, key=color_percentages.get)
     return dominant_color
+
+def color_name_to_bgr(name):
+    mapping = {
+        "Rojo": (0,0,255),
+        "Verde": (0,255,0),
+        "Azul": (255,0,0),
+        "Amarillo": (0,255,255),
+        "Naranja": (0,165,255),
+        "Morado": (255,0,255),
+        "Blanco": (255,255,255),
+        "Negro": (0,0,0)
+    }
+    return mapping.get(name, (255,255,255))
 
 while True:
     ret, frame = cap.read()
@@ -40,8 +61,22 @@ while True:
     frame = cv2.flip(frame, 1)
     roi = frame[y:y+h, x:x+w]
     color_name = get_dominant_color_hsv(roi)
+
+    # Dibujar ROI
     cv2.rectangle(frame, (x, y), (x+w, y+h), (255,255,255), 3)
-    cv2.putText(frame, f"Color: {color_name}", (x, y+h+40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+
+    # Rectángulo pequeño con color detectado
+    cv2.rectangle(frame, (x+w+10, y), (x+w+60, y+50), color_name_to_bgr(color_name), -1)
+
+    # Fondo semitransparente para texto
+    overlay = frame.copy()
+    cv2.rectangle(overlay, (x, y+h+10), (x+250, y+h+60), (0,0,0), -1)
+    alpha = 0.6
+    cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
+
+    # Texto con borde
+    cv2.putText(frame, f"Color: {color_name}", (x+5, y+h+45), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2, cv2.LINE_AA)
+
     cv2.imshow("Detector de color HSV", frame)
     if cv2.waitKey(1) & 0xFF == 27:
         break

@@ -601,6 +601,39 @@ body, html {
 
         <section class="section">
             <div class="section-header">
+                <h2 class="section-title">Demostración Práctica</h2>
+                <div class="divider"></div>
+            </div>
+            
+            <div class="concepts-grid">
+                <div class="concept-card">
+                    <h3>reconocimientoColores.py</h3>
+                    <p>Este programa utiliza OpenCV para detectar y reconocer colores específicos en tiempo real a través de la cámara web. Implementa algoritmos de segmentación de color en el espacio HSV para identificar objetos de colores predefinidos y dibujar contornos alrededor de ellos.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>direccionMirada.py</h3>
+                    <p>Este programa utiliza OpenCV para detectar en tiempo real si el usuario está mirando directamente a la cámara web. Emplea algoritmos de detección facial y de ojos para analizar la posición de los ojos dentro del rostro y determinar la dirección de la mirada. Si ambos ojos son detectados y están alineados hacia la cámara, el sistema muestra un mensaje indicando que el usuario está prestando atención. Esta funcionalidad es especialmente útil en aplicaciones de seguridad, control de acceso, monitoreo de atención en exámenes en línea o sistemas interactivos que requieren verificar la presencia y atención del usuario. El código es sencillo de ejecutar y puede adaptarse fácilmente a diferentes escenarios donde se necesite validar la dirección de la mirada.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>filtroLentes.py</h3>
+                    <p>Este programa implementa un filtro de realidad aumentada que superpone lentes virtuales sobre el rostro del usuario en tiempo real utilizando la cámara web. El proceso comienza detectando la cara y los ojos mediante los clasificadores Haar Cascade de OpenCV. Una vez localizados los ojos, el sistema calcula la posición y el tamaño adecuados para colocar la imagen de los lentes virtuales, asegurando que se ajusten de manera precisa y natural al movimiento y orientación del usuario. El filtro se actualiza dinámicamente en cada fotograma, permitiendo que los lentes sigan la posición de la cabeza y los ojos incluso si el usuario se mueve o cambia de expresión. Esta técnica es ampliamente utilizada en aplicaciones de entretenimiento, redes sociales y demostraciones de realidad aumentada, y puede ser extendida para agregar otros accesorios virtuales o efectos visuales personalizados.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>separarCaras.py</h3>
+                    <p>
+                        Este programa utiliza OpenCV para analizar imágenes y determinar si contienen rostros humanos. Emplea algoritmos de detección facial que examinan cada imagen de una carpeta de entrada, identificando la presencia o ausencia de caras. Si se detecta al menos un rostro en la imagen, el archivo se mueve automáticamente a una carpeta designada para imágenes con caras; en caso contrario, se traslada a una carpeta separada para imágenes sin caras. Este proceso es útil para organizar grandes volúmenes de fotografías, facilitando la clasificación automática y rápida de imágenes según su contenido facial. Además, el código puede adaptarse para trabajar con diferentes formatos de imagen y puede integrarse en flujos de trabajo de preprocesamiento de datos para proyectos de reconocimiento facial, seguridad o gestión de archivos multimedia.
+                    </p>
+                </div>
+            </div>
+            
+           
+        </section>
+
+        <section class="section">
+            <div class="section-header">
                 <h2 class="section-title">Tutorial de Instalación</h2>
                 <div class="divider"></div>
             </div>
@@ -845,9 +878,18 @@ C:\Users\Usuario\AppData\Local\Programs\Python\Python313\Scripts\</div>
                              Navegar a la carpeta donde se encuentra el archivo <span class="highlight">"tutorial_contarDedos.py"</span>
                          </div>
                      </div>
+
+                     <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            Seleccionar el dispositivo de entrada de la cámara en la variable (0 por defecto)
+                            <div class="code-block">cap = cv2.VideoCapture(0)</div>
+                        </div>
+
+                    </div>
                      
                      <div class="step">
-                         <div class="step-number">3</div>
+                         <div class="step-number">4</div>
                          <div class="step-content">
                              Ejecutar el archivo con el siguiente comando:
                              <div class="code-block">python tutorial_contarDedos.py</div>
@@ -855,14 +897,14 @@ C:\Users\Usuario\AppData\Local\Programs\Python\Python313\Scripts\</div>
                      </div>
                      
                      <div class="step">
-                         <div class="step-number">4</div>
+                         <div class="step-number">5</div>
                          <div class="step-content">
                              Verificar que el programa se ejecuta correctamente y muestra la interfaz de detección de dedos
                          </div>
                      </div>
                      
                      <div class="step">
-                         <div class="step-number">5</div>
+                         <div class="step-number">6</div>
                          <div class="step-content">
                              Si hay errores, verificar que todas las dependencias están instaladas correctamente
                          </div>
