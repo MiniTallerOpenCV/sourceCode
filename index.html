@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCV - Visión por Computador</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif !important;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%) !important;
+            min-height: 100vh !important;
+            color: #ffffff !important;
+            overflow-x: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%) !important;
+            pointer-events: none;
+            z-index: -1 !important;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #3b82f6 50%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            font-weight: 300;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section {
+            margin: 6rem 0;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #374151, transparent);
+            flex: 1;
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .concept-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .concept-card:nth-child(odd) {
+            margin-right: auto;
+        }
+
+        .concept-card:nth-child(even) {
+            margin-left: auto;
+        }
+
+        .concept-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .concept-card h3::before {
+            content: '●';
+            color: #8b5cf6;
+            font-size: 1.2rem;
+        }
+
+        .concept-card p {
+            color: #d1d5db;
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        .history-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6, #8b5cf6);
+        }
+
+        .history-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #e5e7eb;
+            text-align: justify;
+        }
+
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .timeline-item {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
+        .tutorial-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        .tutorial-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 1.5rem;
+        }
+
+        .steps-container {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border-left: 3px solid #60a5fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .step:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: #3b82f6;
+            transform: translateX(4px);
+        }
+
+        .step-number {
+            background: #60a5fa;
+            color: #000;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .step:hover .step-number {
+            background: #3b82f6;
+            transform: scale(1.1);
+        }
+
+        .step-content {
+            color: #d1d5db;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .step:hover .step-content {
+            color: #ffffff;
+        }
+
+        .step-content a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .step-content a:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: #1a1a1a;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #e5e7eb;
+            overflow-x: auto;
+        }
+
+        .highlight {
+            background: rgba(59, 130, 246, 0.15);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: #ffffff;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .note {
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 6px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .note-title {
+            color: #fbbf24;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-content {
+            color: #d1d5db;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.03), rgba(139, 92, 246, 0.03));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-circle:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-circle:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-circle:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .concepts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .concept-card:nth-child(odd),
+            .concept-card:nth-child(even) {
+                margin: 0;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .divider {
+                width: 100%;
+                height: 1px;
+            }
+            
+            .tutorial-section {
+                padding: 1.5rem;
+                margin: 1.5rem 0;
+            }
+            
+            .tutorial-title {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+            
+            .step {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                padding: 1rem;
+            }
+            
+            .step-number {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+                align-self: flex-start;
+            }
+            
+            .step-content {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
+            .code-block {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+                margin: 0.75rem 0;
+                overflow-x: auto;
+                word-break: break-all;
+            }
+            
+            .note {
+                padding: 0.75rem;
+                margin: 0.75rem 0;
+            }
+            
+            .note-title {
+                font-size: 0.9rem;
+            }
+            
+            .note-content {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+            
+            .hero {
+                padding: 2rem 0 4rem;
+            }
+            
+            .hero h1 {
+                font-size: clamp(1.8rem, 8vw, 2.5rem);
+            }
+            
+            .hero .subtitle {
+                font-size: 1rem;
+            }
+            
+            .section {
+                margin: 4rem 0;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .tutorial-section {
+                padding: 1rem;
+                margin: 1rem 0;
+            }
+            
+            .step {
+                padding: 0.75rem;
+                gap: 0.5rem;
+            }
+            
+            .step-number {
+                width: 28px;
+                height: 28px;
+                font-size: 0.875rem;
+            }
+            
+            .step-content {
+                font-size: 0.85rem;
+            }
+            
+            .code-block {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+        <div class="floating-circle"></div>
+    </div>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Bibliotecas Embebidas para Visión por Computador</h1>
+            <p class="subtitle">OpenCV y sus aplicaciones en inteligencia artificial</p>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Conocimiento Previo</h2>
+                <div class="divider"></div>
+            </div>
+            
+            <div class="concepts-grid">
+                <div class="concept-card">
+                    <h3>¿Qué es una librería?</h3>
+                    <p>Una librería en software es un conjunto de códigos, funciones, clases o módulos predefinidos que los programadores pueden usar para realizar tareas comunes sin tener que escribir todo desde cero. Es, básicamente, un paquete de herramientas listas para usar que acelera el desarrollo y mejora la eficiencia del código.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>¿Qué es una librería embebida?</h3>
+                    <p>Una librería embebida es una librería que viene incorporada dentro de un software o sistema, de manera que no necesitas instalarla por separado. Se dice que está "embebida" porque forma parte del paquete principal o del entorno de ejecución, garantizando compatibilidad y facilidad de distribución.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>¿Qué es visión por computador?</h3>
+                    <p>La visión por computadora es un área de la inteligencia artificial que permite a las computadoras "ver" y entender imágenes o videos de manera similar a como lo hace un ser humano. Su objetivo es que una máquina pueda interpretar información visual y tomar decisiones o generar acciones basadas en ella.</p>
+                </div>
+                
+                <div class="concept-card">
+                    <h3>¿Qué es OpenCV?</h3>
+                    <p>OpenCV (Open Source Computer Vision Library) es una librería de software de código abierto diseñada para visión por computadora y procesamiento de imágenes. Es muy popular porque permite que los desarrolladores construyan aplicaciones que puedan "ver" y entender imágenes y videos de manera eficiente y robusta.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Tutorial de Instalación</h2>
+                <div class="divider"></div>
+            </div>
+            
+            <div class="tutorial-section">
+                <h3 class="tutorial-title">Instalación de Python</h3>
+                
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            Visitar <a href="https://www.python.org/downloads/" target="_blank">https://www.python.org/downloads/</a>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            Descargar la última versión (recomendada)
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            Ejecutar el instalador y seguir los pasos del asistente
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            Verificar que Python está instalado correctamente
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            Abrir una terminal y ejecutar el siguiente comando:
+                            <div class="code-block">python --version</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            Si aparece la versión de Python, la instalación fue exitosa
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">7</div>
+                        <div class="step-content">
+                            Si no aparece la versión, es necesario configurar las variables de entorno
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">8</div>
+                        <div class="step-content">
+                            Abrir el Panel de Control de Windows y buscar <span class="highlight">"Variables de entorno"</span>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">9</div>
+                        <div class="step-content">
+                            En las variables de entorno, buscar la variable <span class="highlight">"Path"</span> y agregar las rutas de Python
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">10</div>
+                        <div class="step-content">
+                            Agregar las siguientes rutas:
+                            <div class="code-block">C:\Users\Usuario\AppData\Local\Programs\Python\Python313\
+C:\Users\Usuario\AppData\Local\Programs\Python\Python313\Scripts\</div>
+                        </div>
+                    </div>
+                </div>
+                
+                 <div class="note">
+                     <div class="note-title">💡 Nota</div>
+                     <div class="note-content">
+                         Asegúrate de reemplazar "Usuario" con tu nombre de usuario real en las rutas de Python. Después de modificar las variables de entorno, reinicia la terminal para que los cambios surtan efecto.
+                     </div>
+                 </div>
+             </div>
+             
+             <div class="tutorial-section">
+                 <h3 class="tutorial-title">Instalación de OpenCV</h3>
+                 
+                 <div class="steps-container">
+                     <div class="step">
+                         <div class="step-number">1</div>
+                         <div class="step-content">
+                             Abrir una terminal o línea de comandos
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">2</div>
+                         <div class="step-content">
+                             Ejecutar el siguiente comando para instalar OpenCV:
+                             <div class="code-block">pip install opencv-python</div>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">3</div>
+                         <div class="step-content">
+                             Verificar que OpenCV se instaló correctamente:
+                             <div class="code-block">python -c "import cv2; print(cv2.__version__)"</div>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">4</div>
+                         <div class="step-content">
+                             Si aparece la versión de OpenCV, la instalación fue exitosa
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">5</div>
+                         <div class="step-content">
+                             Si no aparece la versión, configurar las variables de entorno con la ruta de OpenCV
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">6</div>
+                         <div class="step-content">
+                             Agregar la siguiente ruta a las variables de entorno:
+                             <div class="code-block">C:\Users\Usuario\AppData\Local\Programs\Python\Python313\Lib\site-packages\opencv_python_headless-4.11.0.86\opencv_python_headless.cp313-win_amd64.pyd</div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             
+             <div class="tutorial-section">
+                 <h3 class="tutorial-title">Instalación de NumPy</h3>
+                 
+                 <div class="steps-container">
+                     <div class="step">
+                         <div class="step-number">1</div>
+                         <div class="step-content">
+                             Abrir una terminal o línea de comandos
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">2</div>
+                         <div class="step-content">
+                             Ejecutar el siguiente comando para instalar NumPy:
+                             <div class="code-block">pip install numpy</div>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">3</div>
+                         <div class="step-content">
+                             Verificar que NumPy se instaló correctamente:
+                             <div class="code-block">python -c "import numpy; print(numpy.__version__)"</div>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">4</div>
+                         <div class="step-content">
+                             Si aparece la versión de NumPy, la instalación fue exitosa
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">5</div>
+                         <div class="step-content">
+                             Si no aparece la versión, configurar las variables de entorno con la ruta de NumPy
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">6</div>
+                         <div class="step-content">
+                             Agregar la siguiente ruta a las variables de entorno:
+                             <div class="code-block">C:\Users\Usuario\AppData\Local\Programs\Python\Python313\Lib\site-packages\numpy\</div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             
+             <div class="tutorial-section">
+                 <h3 class="tutorial-title">Código Fuente</h3>
+                 
+                 <div class="steps-container">
+                     <div class="step">
+                         <div class="step-number">1</div>
+                         <div class="step-content">
+                             Visitar el repositorio de GitHub:
+                             <a href="https://github.com/orgs/MiniTallerOpenCV/sourceCode" target="_blank">https://github.com/orgs/MiniTallerOpenCV/sourceCode</a>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">2</div>
+                         <div class="step-content">
+                             Descargar el archivo <span class="highlight">"tutorial_contarDedos.py"</span> o clonar el repositorio completo
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">3</div>
+                         <div class="step-content">
+                             Guardar el archivo en una carpeta de tu elección
+                         </div>
+                     </div>
+                 </div>
+                 
+                 <div class="note">
+                     <div class="note-title">📁 Nota</div>
+                     <div class="note-content">
+                         Los demás archivos en el repositorio son demostraciones adicionales que puedes explorar para aprender más sobre las capacidades de OpenCV.
+                     </div>
+                 </div>
+             </div>
+             
+             <div class="tutorial-section">
+                 <h3 class="tutorial-title">Ejecución del Programa</h3>
+                 
+                 <div class="steps-container">
+                     <div class="step">
+                         <div class="step-number">1</div>
+                         <div class="step-content">
+                             Abrir una terminal o entorno de desarrollo (VS Code, PyCharm, etc.)
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">2</div>
+                         <div class="step-content">
+                             Navegar a la carpeta donde se encuentra el archivo <span class="highlight">"tutorial_contarDedos.py"</span>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">3</div>
+                         <div class="step-content">
+                             Ejecutar el archivo con el siguiente comando:
+                             <div class="code-block">python tutorial_contarDedos.py</div>
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">4</div>
+                         <div class="step-content">
+                             Verificar que el programa se ejecuta correctamente y muestra la interfaz de detección de dedos
+                         </div>
+                     </div>
+                     
+                     <div class="step">
+                         <div class="step-number">5</div>
+                         <div class="step-content">
+                             Si hay errores, verificar que todas las dependencias están instaladas correctamente
+                         </div>
+                     </div>
+                 </div>
+                 
+                 <div class="note">
+                     <div class="note-title">⚠️ Solución de Problemas</div>
+                     <div class="note-content">
+                         Si el programa no se ejecuta correctamente, asegúrate de que Python, OpenCV y NumPy estén instalados y configurados correctamente. También verifica que tienes una cámara web conectada para el funcionamiento del programa.
+                     </div>
+                 </div>
+             </div>
+         </section>
+     </div>
+ </body>
+ </html>
